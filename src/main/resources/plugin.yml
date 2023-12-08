@@ -1,0 +1,9 @@
+name: freeverse
+version: '${project.version}'
+main: me.kvdpxne.freeverse.FreeverseEntrypoint
+api-version: '1.19'
+prefix: freeverse
+load: STARTUP
+authors: [kvdpxne]
+description: XDD
+website: https://github.com/kvdpxne/freeverse
