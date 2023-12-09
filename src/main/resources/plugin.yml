@@ -1,7 +1,7 @@
-name: freeverse
-version: '${project.version}'
+name: Freeverse
+version: "${project.version}"
 main: me.kvdpxne.freeverse.FreeverseEntrypoint
-api-version: '1.19'
+api-version: "1.19"
 prefix: freeverse
 load: STARTUP
 authors: [kvdpxne]
