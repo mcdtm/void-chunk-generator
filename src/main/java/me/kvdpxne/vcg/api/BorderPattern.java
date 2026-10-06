@@ -1,22 +1,27 @@
 package me.kvdpxne.vcg.api;
 
 /**
- * Wzorzec rozmieszczenia blokow borderBlock na platformie.
+ * Placement strategy for the border block on a void platform.
  */
 public enum BorderPattern {
 
-    /**
-     * 4 bedrocki w kwadracie 2x2 wokol (0,0) – pozycje (±1, ±1).
-     * Klasyczne zachowanie pluginu – sluzy jako spawn marker.
-     */
-    SPAWN_MARKER,
+  /**
+   * Four border blocks arranged as a 2x2 block centered on (0, 0).
+   */
+  SPAWN_MARKER,
 
-    /** Ring borderBlock po obwodzie calej platformy. */
-    RING,
+  /**
+   * Border blocks form a ring along the platform edge.
+   */
+  RING,
 
-    /** Cala platforma z borderBlock (mainBlock nieuzywany). */
-    FULL,
+  /**
+   * The entire platform is made of the border block.
+   */
+  FULL,
 
-    /** Brak borderBlock – tylko mainBlock. */
-    NONE
+  /**
+   * No border blocks; only the main block is used.
+   */
+  NONE
 }

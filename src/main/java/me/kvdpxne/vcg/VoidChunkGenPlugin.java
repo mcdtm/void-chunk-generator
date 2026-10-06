@@ -1,32 +1,27 @@
-package me.kvdpxne.vcg; // docelowa grupa (przyszlosc)
+package me.kvdpxne.vcg;
 
+import java.util.Objects;
 import me.kvdpxne.vcg.api.VoidChunkGenApi;
-import me.kvdpxne.vcg.api.VoidWorldConfig;
 import me.kvdpxne.vcg.internal.*;
-import me.kvdpxne.vcg.internal.listeners.BedListener;
-import me.kvdpxne.vcg.internal.listeners.SpawnListener;
-import me.kvdpxne.vcg.internal.listeners.WeatherListener;
-import me.kvdpxne.vcg.internal.listeners.WorldLifecycleListener;
+import org.bukkit.Bukkit;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * Klasa glowna pluginu.
- * <p>
- * Tryby dzialania:
- * 1) Standalone - swiaty wskazane w bukkit.yml, config.properties jako
- * wspolna konfiguracja dla wszystkich swiatow void.
- * 2) Z DimensionManager - per-swiatowe nadpisania przez API (w pamieci).
- * <p>
- * Plugin nie zarzadza cyklem zycia swiatow - to rola DimensionManager
- * (lub bukkit.yml w trybie standalone).
+ * Entry point.
+ *
+ * <p>Standalone mode: worlds declared in {@code bukkit.yml} with
+ * {@code generator: VoidChunkGenerator} receive the shared config from
+ * {@code settings.properties}.</p>
+ *
+ * <p>Managed mode: a consumer (e.g. DimensionManager) registers per-world
+ * overrides through {@link VoidChunkGenApi}.</p>
  */
 public final class VoidChunkGenPlugin extends JavaPlugin {
 
-  private ConfigResolver configResolver;
-  private PlatformGen platformGen;
-  private WorldSettingsApplier settingsApplier;
+  private ConfigResolver resolver;
+  private PlatformGen platformGenerator;
   private VoidChunkGenApi api;
 
   @Override
@@ -34,49 +29,55 @@ public final class VoidChunkGenPlugin extends JavaPlugin {
     final var logger = this.getLogger();
 
     final var loader = new PropertiesConfigLoader(logger);
-    final var configPath = loader.ensureFile(
-      this.getDataFolder().toPath(), "config.properties");
-    final VoidWorldConfig defaultConfig = loader.load(configPath);
+    final var configPath = loader.ensureFile(this.getDataFolder().toPath());
+    final var defaultConfig = loader.load(configPath);
 
-    this.configResolver = new ConfigResolver(defaultConfig, logger);
-    this.platformGen = new DefaultPlatformGen(logger);
-    this.settingsApplier = new WorldSettingsApplier(logger);
+    this.resolver = new ConfigResolver(defaultConfig, logger);
+    this.platformGenerator = new DefaultPlatformGen(logger);
+    this.api = new VoidChunkGenApiImpl(this.resolver);
 
-    this.api = new VoidChunkGenApiImpl(this.configResolver, this.settingsApplier);
-
-    logger.info("onLoad zakonczony (biom domyslny: " + defaultConfig.biome() + ")");
+    logger.info("onLoad completed (default biome: " + defaultConfig.biome() + ").");
   }
 
   @Override
   public void onEnable() {
-    final var pm = this.getServer().getPluginManager();
-
     this.getServer().getServicesManager().register(
       VoidChunkGenApi.class, this.api, this, ServicePriority.Normal);
 
-    pm.registerEvents(new SpawnListener(this.configResolver), this);
-    pm.registerEvents(new WeatherListener(this.configResolver), this);
-    pm.registerEvents(new BedListener(this.configResolver), this);
-    pm.registerEvents(new WorldLifecycleListener(this.configResolver, this.getLogger()), this);
+    this.getServer().getPluginManager().registerEvents(
+      new WorldLifecycleListener(this.resolver, this.getLogger()), this);
 
-    this.getLogger().info("VoidChunkGenerator wlaczony (API v"
+    this.getLogger().info("VoidChunkGenerator enabled (API v"
       + VoidChunkGenApi.API_VERSION + ").");
   }
 
   @Override
   public void onDisable() {
     this.getServer().getServicesManager().unregisterAll(this);
-    this.getLogger().info("VoidChunkGenerator wylaczony.");
+    this.getLogger().info("VoidChunkGenerator disabled.");
   }
 
   @Override
   public ChunkGenerator getDefaultWorldGenerator(final String worldName, final String id) {
-    final var config = this.configResolver.resolve(worldName);
-    this.getLogger().info("Podpinam generator dla: " + worldName
-      + " (biom: " + config.biome()
-      + ", platforma: " + config.platform().isPresent()
-      + ", override: " + this.configResolver.findOverride(worldName).isPresent() + ")");
-    return new VoidChunkGen(config, this.platformGen, this.getLogger());
+    Objects.requireNonNull(worldName, "worldName");
+    final var config = this.resolver.resolve(worldName);
+    this.getLogger().info("Attaching generator for world: " + worldName
+      + " (biome: " + config.biome()
+      + ", platform: " + config.platform().isPresent()
+      + ", override: " + this.resolver.findOverride(worldName).isPresent() + ").");
+    return new VoidChunkGen(config, this.platformGenerator, this.getLogger());
   }
 
+  /**
+   * Reloads {@code settings.properties} and updates the default config.
+   * Per-world overrides stay untouched.
+   */
+  public void reloadDefaultConfig() {
+    final var loader = new PropertiesConfigLoader(this.getLogger());
+    final var path = loader.ensureFile(this.getDataFolder().toPath());
+    final var newDefault = loader.load(path);
+    this.resolver.setDefault(newDefault);
+    this.getLogger().info("Default configuration reloaded (biome: "
+      + newDefault.biome() + ").");
+  }
 }
