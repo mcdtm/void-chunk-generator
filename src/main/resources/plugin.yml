@@ -1,9 +1,7 @@
-name: Freeverse
-version: "${project.version}"
-main: me.kvdpxne.freeverse.FreeverseEntrypoint
-api-version: "1.19"
-prefix: freeverse
-load: STARTUP
-authors: [kvdpxne]
-description: "${project.description}"
-website: https://github.com/kvdpxne/freeverse
+name: 'VoidChunkGenerator'
+version: '${version}'
+main: 'me.kvdpxne.vcg.VoidChunkGenPlugin'
+load: 'STARTUP'
+authors: [ 'kvdpxne', 'mcdtm team' ]
+description: '${description}'
+website: 'https://github.com/mcdtm/void-chuk-generator/'
