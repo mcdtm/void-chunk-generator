@@ -1,11 +1,11 @@
-package me.kvdpxne.vcg.internal;
+package me.kvd.vcg.internal;
 
-import me.kvdpxne.vcg.api.VoidChunkGenApi;
-import me.kvdpxne.vcg.api.VoidWorldConfig;
-import me.kvdpxne.vcg.internal.ConfigResolver;
+import me.kvd.vcg.api.VoidChunkGenApi;
+import me.kvd.vcg.internal.settings.PluginSettings;
 
 import java.util.Optional;
 import java.util.Set;
+import me.kvd.vcg.internal.util.ConfigResolver;
 
 /**
  * Internal implementation of {@link VoidChunkGenApi}.
@@ -14,14 +14,14 @@ import java.util.Set;
  */
 public final class VoidChunkGenApiImpl implements VoidChunkGenApi {
 
-  private final ConfigResolver resolver;
+  private final me.kvd.vcg.internal.util.ConfigResolver resolver;
 
   public VoidChunkGenApiImpl(final ConfigResolver resolver) {
     this.resolver = resolver;
   }
 
   @Override
-  public void registerWorldConfig(final String worldName, final VoidWorldConfig config) {
+  public void registerWorldConfig(final String worldName, final PluginSettings config) {
     this.resolver.registerOverride(worldName, config);
   }
 
@@ -34,12 +34,12 @@ public final class VoidChunkGenApiImpl implements VoidChunkGenApi {
   }
 
   @Override
-  public Optional<VoidWorldConfig> findWorldConfig(final String worldName) {
+  public Optional<PluginSettings> findWorldConfig(final String worldName) {
     return this.resolver.findOverride(worldName);
   }
 
   @Override
-  public VoidWorldConfig resolveConfig(final String worldName) {
+  public PluginSettings resolveConfig(final String worldName) {
     return this.resolver.resolve(worldName);
   }
 

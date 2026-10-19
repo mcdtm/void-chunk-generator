@@ -1,27 +1,31 @@
-package me.kvdpxne.vcg.api;
+package me.kvd.vcg.internal.settings;
 
 import java.util.Objects;
 import java.util.Optional;
 
+import me.kvd.vcg.api.PlatformConfig;
+import me.kvd.vcg.api.SpawnOffset;
 import org.bukkit.block.Biome;
 
 /**
  * Immutable configuration of a single void world.
  * Only contains data relevant to chunk generation.
  */
-public record VoidWorldConfig(
+public record PluginSettings(
   Biome biome,
   Optional<PlatformConfig> platform,
-  Optional<SpawnOffset> spawnLocation
+  Optional<SpawnOffset> spawnLocation,
+  boolean metricsEnabled,
+  boolean metricsExtendedEnabled
 ) {
 
-  public VoidWorldConfig {
+  public PluginSettings {
     Objects.requireNonNull(biome, "biome");
     platform = null == platform ? Optional.empty() : platform;
     spawnLocation = null == spawnLocation ? Optional.empty() : spawnLocation;
   }
 
-  public static VoidWorldConfig defaults() {
+  public static PluginSettings defaults() {
     return builder().build();
   }
 
@@ -43,21 +47,24 @@ public record VoidWorldConfig(
       return this;
     }
 
-    public Builder platform(final PlatformConfig platform) {
+    public Builder platform(final boolean expression, final PlatformConfig platform) {
       this.platform = platform;
       return this;
     }
 
-    public Builder spawnLocation(final SpawnOffset spawnLocation) {
+    public Builder spawnOffset(final boolean expression, final SpawnOffset spawnLocation) {
       this.spawnLocation = spawnLocation;
       return this;
     }
 
-    public VoidWorldConfig build() {
-      return new VoidWorldConfig(
+    public PluginSettings build() {
+      return new PluginSettings(
         this.biome,
         Optional.ofNullable(this.platform),
-        Optional.ofNullable(this.spawnLocation));
+        Optional.ofNullable(this.spawnLocation),
+        true,
+        true
+      );
     }
   }
 }

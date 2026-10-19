@@ -1,4 +1,4 @@
-package me.kvdpxne.vcg.api.event;
+package me.kvd.vcg.api.event;
 
 import java.util.Objects;
 import org.bukkit.Location;

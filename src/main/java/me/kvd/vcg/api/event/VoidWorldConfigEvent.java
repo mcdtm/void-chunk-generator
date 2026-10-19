@@ -1,7 +1,7 @@
-package me.kvdpxne.vcg.api.event;
+package me.kvd.vcg.api.event;
 
 import java.util.Objects;
-import me.kvdpxne.vcg.api.VoidWorldConfig;
+import me.kvd.vcg.internal.settings.PluginSettings;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -17,10 +17,10 @@ public final class VoidWorldConfigEvent {
     private static final HandlerList HANDLERS = new HandlerList();
 
     private final String worldName;
-    private VoidWorldConfig config;
+    private PluginSettings config;
     private boolean cancelled;
 
-    public Registered(final String worldName, final VoidWorldConfig config) {
+    public Registered(final String worldName, final PluginSettings config) {
       this.worldName = Objects.requireNonNull(worldName, "worldName");
       this.config = Objects.requireNonNull(config, "config");
       this.cancelled = false;
@@ -30,11 +30,11 @@ public final class VoidWorldConfigEvent {
       return this.worldName;
     }
 
-    public VoidWorldConfig getConfig() {
+    public PluginSettings getConfig() {
       return this.config;
     }
 
-    public void setConfig(final VoidWorldConfig config) {
+    public void setConfig(final PluginSettings config) {
       this.config = Objects.requireNonNull(config, "config");
     }
 
@@ -63,10 +63,10 @@ public final class VoidWorldConfigEvent {
     private static final HandlerList HANDLERS = new HandlerList();
 
     private final String worldName;
-    private final VoidWorldConfig previousConfig;
+    private final PluginSettings previousConfig;
 
     public Unregistered(final String worldName,
-                        final VoidWorldConfig previousConfig) {
+                        final PluginSettings previousConfig) {
       this.worldName = Objects.requireNonNull(worldName, "worldName");
       this.previousConfig = Objects.requireNonNull(previousConfig, "previousConfig");
     }
@@ -75,7 +75,7 @@ public final class VoidWorldConfigEvent {
       return this.worldName;
     }
 
-    public VoidWorldConfig getPreviousConfig() {
+    public PluginSettings getPreviousConfig() {
       return this.previousConfig;
     }
 
@@ -93,20 +93,20 @@ public final class VoidWorldConfigEvent {
 
     private static final HandlerList HANDLERS = new HandlerList();
 
-    private final VoidWorldConfig previous;
-    private final VoidWorldConfig current;
+    private final PluginSettings previous;
+    private final PluginSettings current;
 
-    public Reloaded(final VoidWorldConfig previous,
-                    final VoidWorldConfig current) {
+    public Reloaded(final PluginSettings previous,
+                    final PluginSettings current) {
       this.previous = Objects.requireNonNull(previous, "previous");
       this.current = Objects.requireNonNull(current, "current");
     }
 
-    public VoidWorldConfig getPrevious() {
+    public PluginSettings getPrevious() {
       return this.previous;
     }
 
-    public VoidWorldConfig getCurrent() {
+    public PluginSettings getCurrent() {
       return this.current;
     }
 

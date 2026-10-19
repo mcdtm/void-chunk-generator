@@ -1,7 +1,8 @@
-package me.kvdpxne.vcg.api;
+package me.kvd.vcg.api;
 
 import java.util.Optional;
 import java.util.Set;
+import me.kvd.vcg.internal.settings.PluginSettings;
 
 /**
  * Public API of VoidChunkGenerator.
@@ -22,7 +23,7 @@ public interface VoidChunkGenApi {
    * @throws NullPointerException     if {@code worldName} or {@code config} is null
    * @throws IllegalArgumentException if {@code worldName} is blank
    */
-  void registerWorldConfig(String worldName, VoidWorldConfig config);
+  void registerWorldConfig(String worldName, PluginSettings config);
 
   /**
    * Removes a per-world override if present.
@@ -32,12 +33,12 @@ public interface VoidChunkGenApi {
   /**
    * Returns the per-world override if present.
    */
-  Optional<VoidWorldConfig> findWorldConfig(String worldName);
+  Optional<PluginSettings> findWorldConfig(String worldName);
 
   /**
    * Returns the per-world override or the default from settings.properties.
    */
-  VoidWorldConfig resolveConfig(String worldName);
+  PluginSettings resolveConfig(String worldName);
 
   /**
    * Immutable snapshot of all overridden world names.

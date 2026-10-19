@@ -21,14 +21,19 @@ java {
 dependencies {
   // Server JAR, compileOnly because the server provides it at runtime.
   // We use fileTree to automatically pull in all JARs from the directory, new libraries do not require modifying build.gradle.kts.
-  compileOnly(fileTree(".local_libraries") {
+  "compileOnly"(fileTree(".local_libraries") {
     include("*.jar")
   })
 
   //implementation(libs.bstats)
 //  compileOnly(libs.paper)
-  testImplementation(libs.junit.jupiter)
-  testRuntimeOnly(libs.junit.platform.launcher)
+  "implementation"(libs.bundles.configra)
+
+  // Metrics
+  "implementation"(libs.bstats)
+
+  "testImplementation"(libs.junit.jupiter)
+  "testRuntimeOnly"(libs.junit.platform.launcher)
 }
 
 tasks {
@@ -68,8 +73,9 @@ tasks {
   // Optional Shadow configuration (SHADOW): enable only when the Shadow plugin is applied to avoid plugin resolution failures.
   withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     archiveFileName = "${rootProject.name}-${rootProject.version}.jar"
-    val main = "$group.ts"
-    relocate("org.bstats", "$main.libs.bstats")
+    val main = "${rootProject.group}.vcg.libs"
+    relocate("me.kvd.configra", "$main.me.kvd.configra")
+    relocate("org.bstats", "$main.org.bstats")
     mergeServiceFiles()
     minimize()
   }

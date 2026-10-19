@@ -1,8 +1,8 @@
-package me.kvdpxne.vcg.internal;
+package me.kvd.vcg.internal.generator;
 
 import org.bukkit.World;
 
-import me.kvdpxne.vcg.api.PlatformConfig;
+import me.kvd.vcg.api.PlatformConfig;
 
 /**
  * Strategy for carving a platform into a chunk's section array.

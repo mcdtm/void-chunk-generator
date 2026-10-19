@@ -1,10 +1,14 @@
 [versions]
+configra = "2b66a1e5a9"
 bstats = "3.2.1"
 paper = "26.3.build.+"
 junit-jupiter = "6.0.1"
 shadow = "9.6.1"
 
 [libraries]
+configra-core = { module = "com.github.kvdpxne.configra:core", version.ref = "configra" }
+configra-ini = { module = "com.github.kvdpxne.configra:ini", version.ref = "configra" }
+configra-schema = { module = "com.github.kvdpxne.configra:schema", version.ref = "configra" }
 bstats = { module = "org.bstats:bstats-bukkit", version.ref = "bstats" }
 paper = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
@@ -12,3 +16,6 @@ junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher
 
 [plugins]
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
+
+[bundles]
+configra = ["configra-core", "configra-ini", "configra-schema"]

@@ -1,4 +1,4 @@
-package me.kvdpxne.vcg.internal;
+package me.kvd.vcg.internal.generator;
 
 import java.util.Collections;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import me.kvdpxne.vcg.api.event.VoidWorldSpawnLocationComputedEvent;
+import me.kvd.vcg.api.event.VoidWorldSpawnLocationComputedEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -15,7 +15,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 
-import me.kvdpxne.vcg.api.VoidWorldConfig;
+import me.kvd.vcg.internal.settings.PluginSettings;
 
 /**
  * Generates empty chunks with a fixed biome and an optional platform.
@@ -26,11 +26,11 @@ public final class VoidChunkGen extends ChunkGenerator {
 
   private static final int CHUNK_SIZE = 16;
 
-  private final VoidWorldConfig config;
+  private final PluginSettings config;
   private final PlatformGen platformGen;
   private final Logger logger;
 
-  public VoidChunkGen(final VoidWorldConfig config,
+  public VoidChunkGen(final PluginSettings config,
                       final PlatformGen platformGen,
                       final Logger logger) {
     this.config = Objects.requireNonNull(config, "config");

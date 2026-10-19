@@ -1,9 +1,16 @@
-package me.kvdpxne.vcg;
+package me.kvd.vcg;
 
 import java.util.Objects;
-import me.kvdpxne.vcg.api.VoidChunkGenApi;
-import me.kvdpxne.vcg.internal.*;
-import org.bukkit.Bukkit;
+import me.kvd.vcg.api.VoidChunkGenApi;
+import me.kvd.vcg.internal.util.ConfigResolver;
+import me.kvd.vcg.internal.generator.DefaultPlatformGen;
+import me.kvd.vcg.internal.settings.PluginSettings;
+import me.kvd.vcg.internal.settings.SettingsLoader;
+import me.kvd.vcg.internal.generator.PlatformGen;
+import me.kvd.vcg.internal.generator.VoidChunkGen;
+import me.kvd.vcg.internal.VoidChunkGenApiImpl;
+import me.kvd.vcg.internal.util.WorldLifecycleListener;
+import me.kvd.vcg.internal.metrics.MetricsBootstrap;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,19 +31,21 @@ public final class VoidChunkGenPlugin extends JavaPlugin {
   private PlatformGen platformGenerator;
   private VoidChunkGenApi api;
 
+  private PluginSettings settings;
+
   @Override
   public void onLoad() {
     final var logger = this.getLogger();
+    final var config = (new SettingsLoader(logger))
+      .loadOrCreate(this.getDataFolder().toPath());
 
-    final var loader = new PropertiesConfigLoader(logger);
-    final var configPath = loader.ensureFile(this.getDataFolder().toPath());
-    final var defaultConfig = loader.load(configPath);
+    this.settings = config;
 
-    this.resolver = new ConfigResolver(defaultConfig, logger);
+    this.resolver = new ConfigResolver(config, logger);
     this.platformGenerator = new DefaultPlatformGen(logger);
     this.api = new VoidChunkGenApiImpl(this.resolver);
 
-    logger.info("onLoad completed (default biome: " + defaultConfig.biome() + ").");
+    logger.info("onLoad completed (default biome: " + config.biome() + ").");
   }
 
   @Override
@@ -47,8 +56,13 @@ public final class VoidChunkGenPlugin extends JavaPlugin {
     this.getServer().getPluginManager().registerEvents(
       new WorldLifecycleListener(this.resolver, this.getLogger()), this);
 
-    this.getLogger().info("VoidChunkGenerator enabled (API v"
-      + VoidChunkGenApi.API_VERSION + ").");
+    //
+    new MetricsBootstrap(this, this.settings).start();
+
+    this.getLogger().fine(() -> String.format(
+      "Public API (v%s) registered under %s.",
+      VoidChunkGenApi.API_VERSION, VoidChunkGenApi.class.getName()
+    ));
   }
 
   @Override
@@ -66,18 +80,5 @@ public final class VoidChunkGenPlugin extends JavaPlugin {
       + ", platform: " + config.platform().isPresent()
       + ", override: " + this.resolver.findOverride(worldName).isPresent() + ").");
     return new VoidChunkGen(config, this.platformGenerator, this.getLogger());
-  }
-
-  /**
-   * Reloads {@code settings.properties} and updates the default config.
-   * Per-world overrides stay untouched.
-   */
-  public void reloadDefaultConfig() {
-    final var loader = new PropertiesConfigLoader(this.getLogger());
-    final var path = loader.ensureFile(this.getDataFolder().toPath());
-    final var newDefault = loader.load(path);
-    this.resolver.setDefault(newDefault);
-    this.getLogger().info("Default configuration reloaded (biome: "
-      + newDefault.biome() + ").");
   }
 }

@@ -1,4 +1,4 @@
-package me.kvdpxne.vcg.internal;
+package me.kvd.vcg.internal.util;
 
 import java.util.logging.Logger;
 

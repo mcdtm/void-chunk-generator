@@ -1,15 +1,16 @@
-package me.kvdpxne.vcg.internal;
+package me.kvd.vcg.internal.generator;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import me.kvd.vcg.api.BorderPattern;
 import org.bukkit.World;
 
-import me.kvdpxne.vcg.api.PlatformConfig;
+import me.kvd.vcg.api.PlatformConfig;
 
 /**
  * Default platform layout.
- * Handles every {@link me.kvdpxne.vcg.api.BorderPattern} and works with both
+ * Handles every {@link BorderPattern} and works with both
  * byte-based and short-based section arrays.
  * Never throws - any internal failure is logged and the affected section is
  * left empty so the world keeps generating.

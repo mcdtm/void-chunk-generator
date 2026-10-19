@@ -1,4 +1,4 @@
-package me.kvdpxne.vcg.internal;
+package me.kvd.vcg.internal.util;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -6,10 +6,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-import me.kvdpxne.vcg.api.event.VoidWorldConfigEvent;
+import me.kvd.vcg.api.event.VoidWorldConfigEvent;
 import org.bukkit.Bukkit;
 
-import me.kvdpxne.vcg.api.VoidWorldConfig;
+import me.kvd.vcg.internal.settings.PluginSettings;
 
 /**
  * Resolves the effective configuration for a world.
@@ -21,12 +21,12 @@ import me.kvdpxne.vcg.api.VoidWorldConfig;
  */
 public final class ConfigResolver {
 
-  private final ConcurrentHashMap<String, VoidWorldConfig> overrides;
-  private volatile VoidWorldConfig defaultConfig;
+  private final ConcurrentHashMap<String, PluginSettings> overrides;
+  private volatile PluginSettings defaultConfig;
   private final Logger logger;
 
   public ConfigResolver(
-    final VoidWorldConfig defaultConfig,
+    final PluginSettings defaultConfig,
     final Logger logger
   ) {
     Objects.requireNonNull(defaultConfig, "defaultConfig");
@@ -36,11 +36,11 @@ public final class ConfigResolver {
     this.logger = logger;
   }
 
-  public void setDefault(final VoidWorldConfig config) {
+  public void setDefault(final PluginSettings config) {
     this.defaultConfig = Objects.requireNonNull(config, "config");
   }
 
-  public VoidWorldConfig getDefault() {
+  public PluginSettings getDefault() {
     return this.defaultConfig;
   }
 
@@ -48,7 +48,7 @@ public final class ConfigResolver {
    * @return {@code true} if the override was stored;
    * {@code false} if a listener cancelled the registration
    */
-  public boolean registerOverride(final String worldName, final VoidWorldConfig config) {
+  public boolean registerOverride(final String worldName, final PluginSettings config) {
     Objects.requireNonNull(worldName, "worldName");
     Objects.requireNonNull(config, "config");
 
@@ -67,7 +67,7 @@ public final class ConfigResolver {
     return true;
   }
 
-  public Optional<VoidWorldConfig> removeOverride(final String worldName) {
+  public Optional<PluginSettings> removeOverride(final String worldName) {
     if (null == worldName) {
       return Optional.empty();
     }
@@ -82,14 +82,14 @@ public final class ConfigResolver {
     return Optional.of(removed);
   }
 
-  public Optional<VoidWorldConfig> findOverride(final String worldName) {
+  public Optional<PluginSettings> findOverride(final String worldName) {
     if (null == worldName) {
       return Optional.empty();
     }
     return Optional.ofNullable(this.overrides.get(worldName));
   }
 
-  public VoidWorldConfig resolve(final String worldName) {
+  public PluginSettings resolve(final String worldName) {
     if (null == worldName) {
       return this.defaultConfig;
     }

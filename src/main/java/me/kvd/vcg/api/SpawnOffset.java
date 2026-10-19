@@ -1,4 +1,4 @@
-package me.kvdpxne.vcg.api;
+package me.kvd.vcg.api;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -19,10 +19,6 @@ public record SpawnOffset(
     if (0.0 > y || 255.0 < y) {
       throw new IllegalArgumentException("y must be in [0, 255], got: " + y);
     }
-  }
-
-  public static SpawnOffset of(final double x, final double y, final double z) {
-    return new SpawnOffset(x, y, z, 0.0F, 0.0F);
   }
 
   public Location toLocation(final World world) {

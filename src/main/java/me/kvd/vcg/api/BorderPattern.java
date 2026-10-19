@@ -1,4 +1,4 @@
-package me.kvdpxne.vcg.api;
+package me.kvd.vcg.api;
 
 /**
  * Placement strategy for the border block on a void platform.

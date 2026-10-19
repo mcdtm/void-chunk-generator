@@ -10,11 +10,12 @@ pluginManagement {
   }
 }
 
+@Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
   repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
   repositories {
     mavenCentral()
-    maven("https://jitpack.io/") {
+    maven("https://jitpack.io") {
       content {
         includeGroupAndSubgroups("com.github.kvdpxne")
       }
