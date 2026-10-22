@@ -1,7 +1,0 @@
-name: 'VoidChunkGenerator'
-version: '${version}'
-main: 'me.kvd.vcg.VoidChunkGenPlugin'
-load: 'STARTUP'
-authors: [ 'kvdpxne', 'mcdtm team' ]
-description: '${description}'
-website: 'https://github.com/mcdtm/void-chuk-generator/'

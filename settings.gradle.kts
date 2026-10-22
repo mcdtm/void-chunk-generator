@@ -13,6 +13,7 @@ pluginManagement {
 @Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
   repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+
   repositories {
     mavenCentral()
     maven("https://jitpack.io") {
@@ -20,9 +21,15 @@ dependencyResolutionManagement {
         includeGroupAndSubgroups("com.github.kvdpxne")
       }
     }
-    // https://docs.papermc.io/paper/dev/project-setup/
-    //maven("https://repo.papermc.io/repository/maven-public/")
   }
 }
+
+include(
+  "api",
+  "plugin",
+  "versions:common",
+  "versions:v1_7",
+  "versions:v26"
+)
 
 rootProject.name = "void-chunk-generator"

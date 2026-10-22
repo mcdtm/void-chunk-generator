@@ -1,7 +1,7 @@
 [versions]
 configra = "2b66a1e5a9"
 bstats = "3.2.1"
-paper = "26.3.build.+"
+paper = "1.16.5-R0.1-SNAPSHOT"
 junit-jupiter = "6.0.1"
 shadow = "9.6.1"
 
