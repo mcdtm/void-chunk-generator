@@ -37,15 +37,6 @@ public record FixedSpawnConfig(
   }
 
   /**
-   * Returns a disabled fixed-spawn configuration.
-   *
-   * @return a disabled configuration, never null
-   */
-  public static FixedSpawnConfig disabled() {
-    return new FixedSpawnConfig(false, 0.5, 64.0, 0.5, 0.0f, 0.0f);
-  }
-
-  /**
    * Returns a builder pre-populated with the defaults.
    *
    * @return a new builder, never null
@@ -59,10 +50,10 @@ public record FixedSpawnConfig(
    */
   public static final class Builder {
 
-    private boolean enabled = false;
-    private double x = 0.5;
-    private double y = 64.0;
-    private double z = 0.5;
+    private boolean enabled = true;
+    private double x = 0.0d;
+    private double y = 65.0d;
+    private double z = 0.0d;
     private float yaw = 0.0f;
     private float pitch = 0.0f;
 

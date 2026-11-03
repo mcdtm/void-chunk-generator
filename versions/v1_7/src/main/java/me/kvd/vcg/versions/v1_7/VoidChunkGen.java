@@ -48,7 +48,7 @@ public final class VoidChunkGen extends ChunkGenerator implements VoidGenerator 
                                         final int chunkX, final int chunkZ,
                                         final BiomeGrid biomes) {
     final byte[][] sections = new byte[16][];
-    if (!this.settings.generatePlatform()) {
+    if (!this.settings.platform().enabled()) {
       return sections;
     }
     final byte[] platform = this.platformGen.generatePlatform(

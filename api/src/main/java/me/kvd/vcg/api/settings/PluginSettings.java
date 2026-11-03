@@ -44,9 +44,9 @@ public record PluginSettings(
    */
   public static final class Builder {
 
-    private String biomeName = "PLAINS";
-    private PlatformConfig platform = PlatformConfig.disabled();
-    private FixedSpawnConfig fixedSpawn = FixedSpawnConfig.disabled();
+    private String biomeName = "OCEAN";
+    private PlatformConfig platform = null;
+    private FixedSpawnConfig fixedSpawn = null;
     private boolean metrics = true;
 
     private Builder() {
@@ -78,6 +78,14 @@ public record PluginSettings(
      * @return a new configuration, never null
      */
     public PluginSettings build() {
+      if (null == this.platform) {
+        this.platform = PlatformConfig.builder().build();
+      }
+
+      if (null == this.fixedSpawn) {
+        this.fixedSpawn = FixedSpawnConfig.builder().build();
+      }
+
       return new PluginSettings(
         this.biomeName,
         this.platform,

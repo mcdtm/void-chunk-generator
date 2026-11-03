@@ -53,7 +53,7 @@ public final class ConfigResolver {
    *
    * @param worldName the name of the world, must not be null
    * @return an {@link Optional} containing the removed configuration,
-   *         or empty if no override existed
+   * or empty if no override existed
    * @throws NullPointerException if {@code worldName} is null
    */
   public Optional<PluginSettings> removeOverride(final String worldName) {
@@ -85,9 +85,7 @@ public final class ConfigResolver {
     Objects.requireNonNull(worldName, "worldName");
     final var base = this.overrides.getOrDefault(worldName, this.defaultConfig);
     final var event = new VoidWorldConfigEvent(worldName, base);
-    SafeExecution.run(this.logger,
-      "Fire VoidWorldConfigEvent for world " + worldName,
-      () -> Bukkit.getPluginManager().callEvent(event));
+    Bukkit.getPluginManager().callEvent(event);
     return event.getConfig();
   }
 

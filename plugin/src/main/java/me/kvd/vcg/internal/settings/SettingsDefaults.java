@@ -5,11 +5,6 @@ import me.kvd.configra.core.ConfigBuilder;
 import me.kvd.configra.core.ConfigFile;
 import me.kvd.configra.format.ini.IniFormat;
 import me.kvd.configra.schema.EnumDefaults;
-import me.kvd.vcg.api.rules.FixedSpawnConfig;
-import me.kvd.vcg.api.rules.PlatformBorderPattern;
-import me.kvd.vcg.api.rules.PlatformConfig;
-import me.kvd.vcg.api.settings.PluginSettings;
-import org.bukkit.Material;
 
 /**
  * Package-private factory for the default {@code settings.ini} skeleton.
@@ -42,11 +37,11 @@ final class SettingsDefaults {
 
             File format: INI (https://en.wikipedia.org/wiki/INI_file)
             All keys use snake_case (lower_case_with_underscores).
-            Every value below is applied to every void world.
+            Every value below applies to EVERY void world.
 
-            NOTE: When DimensionManager registers a per-world override
-            through the API, that override takes precedence for the
-            specific world.
+            NOTE: If a per-world override is registered through the API
+            (DimensionManager), that override takes precedence over the
+            values in this file - but ONLY for that specific world.
             ============================================================
             """
         )

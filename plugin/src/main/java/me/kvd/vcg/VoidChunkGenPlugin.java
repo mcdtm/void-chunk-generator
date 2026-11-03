@@ -36,8 +36,7 @@ public final class VoidChunkGenPlugin extends JavaPlugin {
   @Override
   public void onLoad() {
     final var logger = this.getLogger();
-    final var loaded = new SettingsLoader(logger)
-      .loadOrCreate(this.getDataFolder().toPath());
+    final var loaded = new SettingsLoader(logger).loadOrCreate(this.getDataFolder().toPath());
     this.settings = loaded;
     this.resolver = new ConfigResolver(loaded, logger);
     this.platformGenerator = new DefaultPlatformGen(this.settings, logger);

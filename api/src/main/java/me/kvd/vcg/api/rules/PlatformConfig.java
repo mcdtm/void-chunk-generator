@@ -55,17 +55,6 @@ public record PlatformConfig(
   }
 
   /**
-   * Returns a disabled platform configuration.
-   *
-   * @return a disabled configuration, never null
-   */
-  public static PlatformConfig disabled() {
-    return new PlatformConfig(
-      false, 64, "STONE", "BEDROCK",
-      PlatformBorderPattern.NONE, 0);
-  }
-
-  /**
    * Returns a builder pre-populated with the defaults.
    *
    * @return a new builder, never null
@@ -79,12 +68,12 @@ public record PlatformConfig(
    */
   public static final class Builder {
 
-    private boolean enabled = false;
+    private boolean enabled = true;
     private int y = 64;
     private String material = "STONE";
     private String borderMaterial = "BEDROCK";
-    private PlatformBorderPattern borderPattern = PlatformBorderPattern.NONE;
-    private int chunkRadius = 0;
+    private PlatformBorderPattern borderPattern = PlatformBorderPattern.SPAWN_MARKER;
+    private int chunkRadius = 1;
 
     private Builder() {
     }
