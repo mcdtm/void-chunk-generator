@@ -54,26 +54,4 @@ final class SettingsDefaults {
       )
       .build(IniFormat.INSTANCE);
   }
-
-  static PluginSettings defaultSettings() {
-    return new PluginSettings(
-      "OCEAN",
-      new PlatformConfig(
-        64,
-        1,
-        Material.STONE,
-        Material.BEDROCK,
-        PlatformBorderPattern.SPAWN_MARKER
-      ),
-      new FixedSpawnConfig(
-        0.0D,
-        64.25D,
-        0.0D,
-        0.0F,
-        0.0F
-      ),
-      true,
-      true
-    );
-  }
 }

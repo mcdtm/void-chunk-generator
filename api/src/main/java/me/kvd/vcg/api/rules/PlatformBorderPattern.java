@@ -2,6 +2,9 @@ package me.kvd.vcg.api.rules;
 
 /**
  * Placement strategy for the border block on a void platform.
+ * <p>
+ * Determines how the optional border material is arranged
+ * relative to the main platform material.
  */
 public enum PlatformBorderPattern {
 

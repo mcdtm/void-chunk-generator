@@ -2,10 +2,11 @@ package me.kvd.vcg.versions.v1_7;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
-import java.util.logging.Level;
 import java.util.logging.Logger;
+import me.kvd.vcg.api.VoidGenerator;
 import me.kvd.vcg.api.events.VoidWorldSpawnLocationComputedEvent;
 import me.kvd.vcg.api.settings.PluginSettings;
 import org.bukkit.Bukkit;
@@ -16,26 +17,51 @@ import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 
 /**
- * Generates empty chunks with a fixed biome and an optional platform.
- * All exceptions are caught locally so a single bad chunk cannot take down
- * the whole server tick.
+ * Chunk generator that produces empty chunks with an optional platform.
  */
-public final class VoidChunkGen extends ChunkGenerator {
+public final class VoidChunkGen extends ChunkGenerator implements VoidGenerator {
 
-  private static final int CHUNK_SIZE = 16;
-
-  private final PluginSettings config;
+  private final PluginSettings settings;
   private final PlatformGen platformGen;
   private final Logger logger;
   private final Biome biome;
 
-  public VoidChunkGen(final PluginSettings config,
+  /**
+   * Creates a new generator.
+   *
+   * @param settings   the configuration, must not be null
+   * @param platformGen the platform generator, must not be null
+   * @param logger     the logger to use, must not be null
+   * @throws NullPointerException if any argument is null
+   */
+  public VoidChunkGen(final PluginSettings settings,
                       final PlatformGen platformGen,
                       final Logger logger) {
-    this.config = Objects.requireNonNull(config, "config");
+    this.settings = Objects.requireNonNull(settings, "settings");
     this.platformGen = Objects.requireNonNull(platformGen, "platformGen");
     this.logger = Objects.requireNonNull(logger, "logger");
-    this.biome = Biome.valueOf(this.config.biomeName());
+    this.biome = resolveBiome(settings.biomeName(), logger);
+  }
+
+  @Override
+  public byte[][] generateBlockSections(final World world, final Random random,
+                                        final int chunkX, final int chunkZ,
+                                        final BiomeGrid biomes) {
+    final byte[][] sections = new byte[16][];
+    if (!this.settings.generatePlatform()) {
+      return sections;
+    }
+    final byte[] platform = this.platformGen.generatePlatform(
+      chunkX, chunkZ, this.settings.platform());
+    if (null == platform) {
+      return sections;
+    }
+    final int sectionIndex = this.settings.platform().y() >> 4;
+    if (sectionIndex < 0 || sectionIndex > 15) {
+      return sections;
+    }
+    sections[sectionIndex] = platform;
+    return sections;
   }
 
   @Override
@@ -44,78 +70,26 @@ public final class VoidChunkGen extends ChunkGenerator {
   }
 
   @Override
-  public boolean canSpawn(final World world, final int x, final int z) {
-    return true;
-  }
-
-  @Override
   public Location getFixedSpawnLocation(final World world, final Random random) {
-    if (null == world) {
-      return null;
-    }
-    final var fixedSpawn = this.config.fixedSpawn();
-    if (null == fixedSpawn) {
-      return null;
-    }
-    final var initial = fixedSpawn.toLocation(world);
-    final var event = new VoidWorldSpawnLocationComputedEvent(world, initial);
+    Objects.requireNonNull(world, "world");
+    Objects.requireNonNull(random, "random");
+    final var fixed = this.settings.fixedSpawn();
+    final Location base = fixed.enabled()
+      ? new Location(world, fixed.x(), fixed.y(), fixed.z(), fixed.yaw(), fixed.pitch())
+      : new Location(world, 0.5, 64.0, 0.5, 0.0f, 0.0f);
+    final var event = new VoidWorldSpawnLocationComputedEvent(world.getName(), base);
     Bukkit.getPluginManager().callEvent(event);
-    return event.isCancelled() ? null : event.getSpawnLocation();
+    final var computed = event.getSpawnLocation();
+    return null == computed ? new Location(world, 0.5, 64.0, 0.5) : computed;
   }
 
-  @Override
-  public byte[][] generateBlockSections(final World world, final Random random,
-                                        final int chunkX, final int chunkZ,
-                                        final BiomeGrid biomes) {
-    final var sectionCount = this.sectionCount(world);
+  private static Biome resolveBiome(final String name, final Logger logger) {
     try {
-      this.applyBiome(biomes);
-      final var sections = new byte[sectionCount][];
-      final var platform = this.config.platform();
-      if (null != platform) {
-        this.platformGen.generate(sections, world, chunkX, chunkZ, platform);
-      }
-      return sections;
-    } catch (final RuntimeException ex) {
-      this.logger.log(Level.SEVERE, "Byte chunk generation failed at ("
-        + chunkX + ", " + chunkZ + ")", ex);
-      return new byte[sectionCount][];
-    }
-  }
-
-  @Override
-  public short[][] generateExtBlockSections(final World world, final Random random,
-                                            final int chunkX, final int chunkZ,
-                                            final BiomeGrid biomes) {
-    final var sectionCount = this.sectionCount(world);
-    try {
-      this.applyBiome(biomes);
-      final var sections = new short[sectionCount][];
-      final var platform = this.config.platform();
-      if (null != platform) {
-        this.platformGen.generateExt(sections, world, chunkX, chunkZ, platform);
-      }
-      return sections;
-    } catch (final RuntimeException ex) {
-      this.logger.log(Level.SEVERE, "Ext chunk generation failed at ("
-        + chunkX + ", " + chunkZ + ")", ex);
-      return new short[sectionCount][];
-    }
-  }
-
-  private int sectionCount(final World world) {
-    return null == world ? 16 : world.getMaxHeight() / CHUNK_SIZE;
-  }
-
-  private void applyBiome(final BiomeGrid biomes) {
-    if (null == biomes) {
-      return;
-    }
-    final var biome = this.biome;
-    for (var x = 0; CHUNK_SIZE > x; x++) {
-      for (var z = 0; CHUNK_SIZE > z; z++) {
-        biomes.setBiome(x, z, biome);
-      }
+      return Biome.valueOf(name.toUpperCase(Locale.ROOT));
+    } catch (final IllegalArgumentException e) {
+      logger.warning(() -> "Unknown biome '" + name
+        + "', falling back to PLAINS");
+      return Biome.PLAINS;
     }
   }
 }

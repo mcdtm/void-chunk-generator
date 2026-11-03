@@ -13,8 +13,6 @@ import me.kvd.vcg.api.rules.FixedSpawnConfig;
 import me.kvd.vcg.api.rules.PlatformBorderPattern;
 import me.kvd.vcg.api.rules.PlatformConfig;
 import me.kvd.vcg.api.settings.PluginSettings;
-import org.bukkit.Material;
-import org.bukkit.block.Biome;
 
 public final class SettingsLoader {
 
@@ -42,7 +40,7 @@ public final class SettingsLoader {
       return this.loadSync(path);
     }
     this.createDefaultFileAsync(dataFolder);
-    return SettingsDefaults.defaultSettings();
+    return PluginSettings.builder().build();
   }
 
   /**
@@ -54,7 +52,7 @@ public final class SettingsLoader {
       return this.map(config);
     } catch (final Exception ex) {
       this.logger.log(Level.SEVERE, "Błąd podczas wczytywania " + FILE_NAME, ex);
-      return SettingsDefaults.defaultSettings();
+      return PluginSettings.builder().build();
     }
   }
 
@@ -67,7 +65,7 @@ public final class SettingsLoader {
       return this.map(config);
     } catch (final Exception ex) {
       this.logger.log(Level.SEVERE, "Błąd podczas wczytywania " + FILE_NAME, ex);
-      return SettingsDefaults.defaultSettings();
+      return PluginSettings.builder().build();
     }
   }
 
@@ -102,26 +100,29 @@ public final class SettingsLoader {
    * Mapowanie wczytanego {@link ConfigFile} na {@link PluginSettings}.
    */
   private PluginSettings map(final ConfigFile config) {
-    return new PluginSettings(
-      config.getOrElse(SettingsKeys.BIOME, Biome.OCEAN.name()),
-      config.getOrElse(SettingsKeys.PLATFORM_ENABLED, true) ?
-        new PlatformConfig(
-          config.getOrElse(SettingsKeys.PLATFORM_Y, 64),
-          config.getOrElse(SettingsKeys.PLATFORM_CHUNK_RADIUS, 1),
-          config.getOrElse(SettingsKeys.PLATFORM_MAIN_BLOCK, Material.STONE),
-          config.getOrElse(SettingsKeys.PLATFORM_BORDER_BLOCK, Material.BEDROCK),
-          config.getOrElse(SettingsKeys.PLATFORM_PATTERN, PlatformBorderPattern.SPAWN_MARKER)
-        ) : null,
-      config.getOrElse(SettingsKeys.SPAWN_ENABLED, true) ?
-        new FixedSpawnConfig(
-          config.getOrElse(SettingsKeys.SPAWN_X, 0.0D),
-          config.getOrElse(SettingsKeys.SPAWN_Y, 65.25D),
-          config.getOrElse(SettingsKeys.SPAWN_Z, 0.0D),
-          config.getOrElse(SettingsKeys.SPAWN_YAW, 0.0F),
-          config.getOrElse(SettingsKeys.SPAWN_PITCH, 0.0F)
-        ) : null,
-      config.getOrElse(SettingsKeys.METRICS_ENABLED, true),
-      config.getOrElse(SettingsKeys.METRICS_EXTENDED_ENABLE, true)
-    );
+    return PluginSettings.builder()
+      .biomeName(config.getOrElse(SettingsKeys.BIOME, "OCEAN"))
+      .platform(
+        PlatformConfig.builder()
+          .enabled(config.getOrElse(SettingsKeys.PLATFORM_ENABLED, true))
+          .y(config.getOrElse(SettingsKeys.PLATFORM_Y, 64))
+          .chunkRadius(config.getOrElse(SettingsKeys.PLATFORM_CHUNK_RADIUS, 1))
+          .mainBlock(config.getOrElse(SettingsKeys.PLATFORM_MAIN_BLOCK, "BEDROCK"))
+          .borderBlock(config.getOrElse(SettingsKeys.PLATFORM_BORDER_BLOCK, "STONE"))
+          .pattern(config.getOrElse(SettingsKeys.PLATFORM_PATTERN, PlatformBorderPattern.NONE))
+          .build()
+      )
+      .fixedSpawn(
+        FixedSpawnConfig.builder()
+          .enabled(config.getOrElse(SettingsKeys.SPAWN_ENABLED, true))
+          .x(config.getOrElse(SettingsKeys.SPAWN_X, 0.0D))
+          .y(config.getOrElse(SettingsKeys.SPAWN_Y, 65.0D))
+          .z(config.getOrElse(SettingsKeys.SPAWN_Z, 0.0D))
+          .yaw(config.getOrElse(SettingsKeys.SPAWN_YAW, 0.0F))
+          .pitch(config.getOrElse(SettingsKeys.SPAWN_PITCH, 0.0F))
+          .build()
+      )
+      .metrics(config.getOrElse(SettingsKeys.METRICS_ENABLED, true))
+      .build();
   }
 }

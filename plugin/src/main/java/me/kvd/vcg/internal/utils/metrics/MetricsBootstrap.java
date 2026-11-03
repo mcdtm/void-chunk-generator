@@ -49,17 +49,15 @@ public final class MetricsBootstrap {
       return;
     }
     final var metrics = new Metrics(this.plugin, this.pluginId);
-    if (this.settings.metricsExtendedEnabled()) {
-      this.registerCharts(metrics);
-    }
+    this.registerCharts(metrics);
     this.logger.fine(() -> "bStats metrics enabled (id " + this.pluginId
       + "). Set bstats-enabled=false to opt out.");
   }
 
   private void registerCharts(final Metrics metrics) {
     this.addChart(metrics, "biome", this.settings.biomeName());
-    this.addChart(metrics, "platform_enabled", this.settings.platformEnabled());
-    this.addChart(metrics, "spawn_enabled", this.settings.fixedSpawnEnabled());
+    this.addChart(metrics, "platform_enabled", this.settings.platform().enabled());
+    this.addChart(metrics, "spawn_enabled", this.settings.fixedSpawn().enabled());
   }
 
   private void addChart(final Metrics metrics,

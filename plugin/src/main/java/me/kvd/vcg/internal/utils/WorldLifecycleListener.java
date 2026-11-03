@@ -1,41 +1,43 @@
 package me.kvd.vcg.internal.utils;
 
+import java.util.Objects;
 import java.util.logging.Logger;
-
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldUnloadEvent;
 
 /**
- * Cleans up per-world overrides on unload.
- * Guards against consumers who forget to call
- * {@code unregisterWorldConfig} - the registry would otherwise grow unbounded.
+ * Clears per-world overrides when a world is unloaded.
  */
 public final class WorldLifecycleListener implements Listener {
 
   private final ConfigResolver resolver;
   private final Logger logger;
 
+  /**
+   * Creates a new listener.
+   *
+   * @param resolver the configuration resolver, must not be null
+   * @param logger   the logger to use, must not be null
+   * @throws NullPointerException if any argument is null
+   */
   public WorldLifecycleListener(final ConfigResolver resolver, final Logger logger) {
-    if (null == resolver) {
-      throw new NullPointerException("resolver must not be null");
-    }
-    if (null == logger) {
-      throw new NullPointerException("logger must not be null");
-    }
-    this.resolver = resolver;
-    this.logger = logger;
+    this.resolver = Objects.requireNonNull(resolver, "resolver");
+    this.logger = Objects.requireNonNull(logger, "logger");
   }
 
-  @EventHandler(priority = EventPriority.MONITOR)
+  /**
+   * Clears the override when the world is unloaded.
+   *
+   * @param event the unload event, must not be null
+   */
+  @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
   public void onWorldUnload(final WorldUnloadEvent event) {
-    if (null == event) {
-      return;
-    }
     final var worldName = event.getWorld().getName();
-    this.resolver.removeOverride(worldName)
-      .ifPresent(_ -> this.logger.info(
-        "Cleaned up override for unloaded world: " + worldName));
+    if (this.resolver.removeOverride(worldName).isPresent()) {
+      this.logger.fine(() -> "Removed override for unloaded world "
+        + worldName);
+    }
   }
 }

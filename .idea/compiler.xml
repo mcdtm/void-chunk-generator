@@ -3,4 +3,26 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="25" />
   </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="void-chunk-generator.api" options="-Xlint:all -Xlint:-serial" />
+      <module name="void-chunk-generator.api.main" options="-Xlint:all -Xlint:-serial" />
+      <module name="void-chunk-generator.api.test" options="-Xlint:all -Xlint:-serial" />
+      <module name="void-chunk-generator.plugin" options="-Xlint:all -Xlint:-serial" />
+      <module name="void-chunk-generator.plugin.main" options="-Xlint:all -Xlint:-serial" />
+      <module name="void-chunk-generator.plugin.test" options="-Xlint:all -Xlint:-serial" />
+      <module name="void-chunk-generator.versions" options="-Xlint:all -Xlint:-serial" />
+      <module name="void-chunk-generator.versions.common" options="-Xlint:all -Xlint:-serial" />
+      <module name="void-chunk-generator.versions.common.main" options="-Xlint:all -Xlint:-serial" />
+      <module name="void-chunk-generator.versions.common.test" options="-Xlint:all -Xlint:-serial" />
+      <module name="void-chunk-generator.versions.main" options="-Xlint:all -Xlint:-serial" />
+      <module name="void-chunk-generator.versions.test" options="-Xlint:all -Xlint:-serial" />
+      <module name="void-chunk-generator.versions.v1_7" options="-Xlint:all -Xlint:-serial" />
+      <module name="void-chunk-generator.versions.v1_7.main" options="-Xlint:all -Xlint:-serial" />
+      <module name="void-chunk-generator.versions.v1_7.test" options="-Xlint:all -Xlint:-serial" />
+      <module name="void-chunk-generator.versions.v26" options="-Xlint:all -Xlint:-serial" />
+      <module name="void-chunk-generator.versions.v26.main" options="-Xlint:all -Xlint:-serial" />
+      <module name="void-chunk-generator.versions.v26.test" options="-Xlint:all -Xlint:-serial" />
+    </option>
+  </component>
 </project>

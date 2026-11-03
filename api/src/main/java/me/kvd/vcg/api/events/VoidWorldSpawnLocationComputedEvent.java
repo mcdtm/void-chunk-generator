@@ -2,62 +2,59 @@ package me.kvd.vcg.api.events;
 
 import java.util.Objects;
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 /**
- * Fired when the generator computes a fixed fixedSpawn location for a world.
- * Cancelling makes the generator return {@code null} (let Bukkit decide).
- * Listeners may also replace the location by calling
- * {@link #setSpawnLocation(Location)}.
- *
- * <p>Called rarely (world creation, respawn, fixedSpawn setup), never during
- * chunk generation.</p>
+ * Fired after the plugin computes the spawn location for a void world.
+ * <p>
+ * Listeners may mutate the spawn location before it is returned to the server.
  */
-public final class VoidWorldSpawnLocationComputedEvent extends Event implements Cancellable {
+public final class VoidWorldSpawnLocationComputedEvent extends Event {
 
   private static final HandlerList HANDLERS = new HandlerList();
 
-  private final World world;
+  private final String worldName;
   private Location spawnLocation;
-  private boolean cancelled;
 
-  public VoidWorldSpawnLocationComputedEvent(final World world, final Location spawnLocation) {
-    this.world = Objects.requireNonNull(world, "world");
-    this.spawnLocation = Objects.requireNonNull(spawnLocation, "spawnOffset");
-    this.cancelled = false;
+  /**
+   * Creates a new event instance.
+   *
+   * @param worldName     the name of the world, must not be null
+   * @param spawnLocation the computed spawn location, must not be null
+   * @throws NullPointerException if any argument is null
+   */
+  public VoidWorldSpawnLocationComputedEvent(final String worldName, final Location spawnLocation) {
+    this.worldName = Objects.requireNonNull(worldName, "worldName");
+    this.spawnLocation = Objects.requireNonNull(spawnLocation, "spawnLocation");
   }
 
-  public World getWorld() {
-    return this.world;
+  /**
+   * Returns the name of the world.
+   *
+   * @return the world name, never null
+   */
+  public String getWorldName() {
+    return this.worldName;
   }
 
+  /**
+   * Returns the computed spawn location.
+   *
+   * @return the spawn location, never null
+   */
   public Location getSpawnLocation() {
     return this.spawnLocation;
   }
 
   /**
-   * Replaces the fixedSpawn location. If the provided location has no world
-   * attached, the event's world is assigned automatically.
+   * Overrides the spawn location.
+   *
+   * @param spawnLocation the new spawn location, must not be null
+   * @throws NullPointerException if {@code spawnLocation} is null
    */
   public void setSpawnLocation(final Location spawnLocation) {
-    Objects.requireNonNull(spawnLocation, "spawnOffset");
-    if (null == spawnLocation.getWorld()) {
-      spawnLocation.setWorld(this.world);
-    }
-    this.spawnLocation = spawnLocation;
-  }
-
-  @Override
-  public boolean isCancelled() {
-    return this.cancelled;
-  }
-
-  @Override
-  public void setCancelled(final boolean cancel) {
-    this.cancelled = cancel;
+    this.spawnLocation = Objects.requireNonNull(spawnLocation, "spawnLocation");
   }
 
   @Override
@@ -65,6 +62,11 @@ public final class VoidWorldSpawnLocationComputedEvent extends Event implements 
     return HANDLERS;
   }
 
+  /**
+   * Returns the static handler list for this event type.
+   *
+   * @return the handler list, never null
+   */
   public static HandlerList getHandlerList() {
     return HANDLERS;
   }

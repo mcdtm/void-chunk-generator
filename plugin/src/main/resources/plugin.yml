@@ -1,0 +1,18 @@
+name: 'VoidChunkGenerator'
+version: '${version}'
+main: 'me.kvd.vcg.VoidChunkGenPlugin'
+load: 'STARTUP'
+authors: [ 'kvdpxne', 'mcdtm team' ]
+description: '${description}'
+website: 'https://github.com/mcdtm/void-chuk-generator/'
+
+commands:
+  voidchunkgen:
+    description: Manage VoidChunkGenerator
+    usage: /voidchunkgen <reload|info|version>
+    permission: voidchunkgen.admin
+    aliases: [vcg]
+permissions:
+  voidchunkgen.admin:
+    description: Allows managing VoidChunkGenerator
+    default: op
